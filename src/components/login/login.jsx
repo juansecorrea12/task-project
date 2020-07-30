@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 toast.configure();
+const Link = "#";
 
 export default class Login extends Component {
   constructor(props) {
@@ -126,11 +127,7 @@ export default class Login extends Component {
             <div className="mt-4">
               <div className="d-flex justify-content-center links">
                 Don't have an account?
-                <a
-                  href="register"
-                  className="ml-2"
-                  onClick={this.props.showView}
-                >
+                <a onClick={this.props.register} href={Link} className="ml-2">
                   Sign Up
                 </a>
               </div>
