@@ -15,10 +15,10 @@ export default class Register extends Component {
     };
   }
 
-  toastSucces = () => {
-    toast.success("Se ha registrado de manera exitosa!", {
+  toastSuccess = (message) => {
+    toast.success(message, {
       position: "top-right",
-      autoClose: 2000,
+      autoClose: 4000,
       hideProgressBar: false,
       closeOnClick: true,
       pauseOnHover: true,
@@ -27,16 +27,16 @@ export default class Register extends Component {
       type: "dark",
     });
   };
+
   toastError = () => {
-    toast.error("Ha ocurrido un error", {
+    toast.error("Something wrong with the request", {
       position: "top-right",
-      autoClose: 2000,
+      autoClose: 4000,
       hideProgressBar: false,
       closeOnClick: true,
       pauseOnHover: true,
       draggable: true,
       progress: undefined,
-      type: "dark",
     });
   };
 
@@ -53,11 +53,21 @@ export default class Register extends Component {
 
     fetch(url, options)
       .then((response) => {
-        response.json();
+        return response.json();
       })
       .then((result) => {
         console.log(result);
-        this.toastSucces();
+        document.getElementById("form_register").reset();
+        switch (result.message) {
+          case "El usuario ya está registrado en el sistema":
+            return this.toastSuccess("This user already exists in database");
+          case "El usuario ha sido registrado correctamente":
+            return this.toastSuccess(
+              "This user has been successfully registered"
+            );
+          default:
+            return null;
+        }
       })
       .catch((error) => {
         console.log(error);
@@ -86,15 +96,11 @@ export default class Register extends Component {
             </div>
             <div className="d-flex justify-content-center form_container">
               <form
+                id="form_register"
                 onSubmit={this.registerUser}
                 onInput={this.handleInputRegister}
               >
                 <div className="input-group mb-3">
-                  {/* <div className="input-group-append">
-                    <span className="input-group-text">
-                      <i className="fas fa-user"></i>
-                    </span>
-                  </div> */}
                   <input
                     id="name"
                     type="text"
@@ -105,11 +111,6 @@ export default class Register extends Component {
                   ></input>
                 </div>
                 <div className="input-group mb-3">
-                  {/* <div className="input-group-append">
-                    <span className="input-group-text">
-                      <i className="fas fa-user"></i>
-                    </span>
-                  </div> */}
                   <input
                     type="text"
                     name="lastname"
@@ -119,11 +120,6 @@ export default class Register extends Component {
                   ></input>
                 </div>
                 <div className="input-group mb-3">
-                  {/* <div className="input-group-append">
-                    <span className="input-group-text">
-                      <i className="fas fa-envelope"></i>
-                    </span>
-                  </div> */}
                   <input
                     type="text"
                     name="email"
@@ -133,11 +129,6 @@ export default class Register extends Component {
                   ></input>
                 </div>
                 <div className="input-group mb-2">
-                  {/* <div className="input-group-append">
-                    <span className="input-group-text">
-                      <i className="fas fa-key"></i>
-                    </span>
-                  </div> */}
                   <input
                     type="password"
                     name="password"
