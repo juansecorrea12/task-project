@@ -12,7 +12,7 @@ export default class App extends Component {
       showView: "loading",
     };
 
-    const Methods = ["login", "register"];
+    const Methods = ["login", "register", "task"];
     Methods.forEach((element) => {
       this[element] = this[element].bind(this);
     });
@@ -29,13 +29,16 @@ export default class App extends Component {
   register() {
     this.setState({ showView: "register" });
   }
+  task() {
+    this.setState({ showView: "task" });
+  }
 
   render() {
     switch (this.state.showView) {
       case "login":
-        return <Login showView={this.register} />;
+        return <Login register={this.register} />;
       case "register":
-        return <Register />;
+        return <Register login={this.login} />;
       default:
         return <Loading />;
     }
