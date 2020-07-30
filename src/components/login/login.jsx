@@ -18,10 +18,10 @@ export default class Login extends Component {
     };
   }
 
-  toastSucces = () => {
-    toast.success("Inicio de sesión exitoso.", {
+  toastSucces = (message) => {
+    toast.success(message, {
       position: "top-right",
-      autoClose: 2000,
+      autoClose: 4000,
       hideProgressBar: false,
       closeOnClick: true,
       pauseOnHover: true,
@@ -31,15 +31,14 @@ export default class Login extends Component {
     });
   };
   toastError = () => {
-    toast.error("Ocurrio un error!", {
+    toast.error("Something wrong with the request", {
       position: "top-right",
-      autoClose: 2000,
+      autoClose: 4000,
       hideProgressBar: false,
       closeOnClick: true,
       pauseOnHover: true,
       draggable: true,
       progress: undefined,
-      type: "dark",
     });
   };
 
@@ -56,11 +55,17 @@ export default class Login extends Component {
 
     fetch(url, options)
       .then((response) => {
-        response.json();
+        return response.json();
       })
       .then((result) => {
-        this.toastSucces();
         console.log(result);
+        document.getElementById("form_login").reset();
+        if (result.message === "Email o contraseña incorrectas") {
+          return this.toastSucces("Email or password is not correct");
+        }
+        if (result.results === "Las credenciales son correctas") {
+          return this.toastSucces("Welcome back!!");
+        }
       })
       .catch((error) => {
         console.log(error);
@@ -88,7 +93,11 @@ export default class Login extends Component {
               </div>
             </div>
             <div className="d-flex justify-content-center form_container">
-              <form onSubmit={this.loginUser} onInput={this.handleinput}>
+              <form
+                id="form_login"
+                onSubmit={this.loginUser}
+                onInput={this.handleinput}
+              >
                 <div className="input-group mb-3">
                   <div className="input-group-append">
                     <span className="input-group-text">
