@@ -1,0 +1,27 @@
+.container-task {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  -webkit-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2),
+    0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  -moz-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2),
+    0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  border-radius: 5px;
+}
+.btn-bg {
+  background-color: #8645ff;
+  border-color: #8645ff;
+  color: #fff;
+}
+.btn-bg:hover {
+  color: #fff;
+  background-color: #562ea1;
+}
+.table td,
+.table th {
+  vertical-align: middle !important;
+}
+.modal-dialog {
+  margin-top: 7rem !important;
+}
+.login_container_task {
+  padding: 0 6rem !important;
+}
