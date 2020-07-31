@@ -105,7 +105,7 @@ export default class Login extends Component {
                     </span>
                   </div>
                   <input
-                    type="text"
+                    type="email"
                     name="email"
                     className="form-control input_user"
                     placeholder="email"
@@ -117,17 +117,22 @@ export default class Login extends Component {
                     <span className="input-group-text">
                       <i className="fas fa-key"></i>
                     </span>
-                    <input
-                      type="password"
-                      name="password"
-                      className="form-control input_pass"
-                      placeholder="password"
-                      required
-                    ></input>
                   </div>
+                  <input
+                    type="password"
+                    name="password"
+                    className="form-control input_pass"
+                    placeholder="password"
+                    required
+                  ></input>
                 </div>
                 <div className="d-flex justify-content-center mt-3 login_container">
-                  <button type="submit" name="button" className="btn login_btn">
+                  <button
+                    type="submit"
+                    name="button"
+                    className="btn login_btn"
+                    // onClick={} Cómo pasar con condicional el estado?
+                  >
                     Login
                   </button>
                 </div>

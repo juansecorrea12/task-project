@@ -4,6 +4,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Login from "./components/login/login";
 import Register from "./components/register/register";
 import Loading from "./components/loading/loading";
+import Task from "./components/tasks/task";
 
 export default class App extends Component {
   constructor() {
@@ -19,7 +20,7 @@ export default class App extends Component {
   }
   componentDidMount() {
     setTimeout(() => {
-      this.setState({ showView: "login" });
+      this.setState({ showView: "task" });
     }, 3000);
   }
 
@@ -36,9 +37,11 @@ export default class App extends Component {
   render() {
     switch (this.state.showView) {
       case "login":
-        return <Login register={this.register} />;
+        return <Login register={this.register} task={this.task} />;
       case "register":
-        return <Register login={this.login} />;
+        return <Register login={this.login} task={this.task} />;
+      case "task":
+        return <Task />;
       default:
         return <Loading />;
     }
