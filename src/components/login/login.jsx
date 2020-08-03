@@ -6,7 +6,6 @@ import "react-toastify/dist/ReactToastify.css";
 
 toast.configure();
 const Link = "#";
-
 export default class Login extends Component {
   constructor(props) {
     super(props);
@@ -64,7 +63,7 @@ export default class Login extends Component {
           return this.toastSucces("Email or password is not correct");
         }
         if (result.results === "Las credenciales son correctas") {
-          return this.toastSucces("Welcome back!!");
+          this.toastSucces("Welcome back!!");
         }
       })
       .catch((error) => {
@@ -131,7 +130,7 @@ export default class Login extends Component {
                     type="submit"
                     name="button"
                     className="btn login_btn"
-                    // onClick={} Cómo pasar con condicional el estado?
+                    // onClick={temp ? this.props.task : console.log(temp)}
                   >
                     Login
                   </button>
