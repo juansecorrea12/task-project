@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import ".//task.component.css";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import {
   Container,
   Row,
@@ -14,23 +16,63 @@ export default class Task extends Component {
   constructor() {
     super();
     this.state = {
-      task: {},
-      show: false,
+      task: {
+        content: "",
+        date: new Date(),
+      },
+      startDate: new Date(),
+      showModal: false,
     };
   }
 
   handleShow = () => {
     this.setState({
-      show: true,
+      showModal: true,
     });
   };
   handleCLose = () => {
     this.setState({
-      show: false,
+      showModal: false,
     });
   };
 
-  addTask = () => {};
+  addTask = (event) => {
+    event.preventDefault();
+    const url = "https://academlo-todolist.herokuapp.com/tasks";
+    const options = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json; charset=UTF-8",
+      },
+      body: JSON.stringify(this.state.task),
+    };
+
+    fetch(url, options)
+      .then((response) => {
+        response.json();
+      })
+      .then((result) => {
+        console.log(result);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  handleTask = (event) => {
+    this.setState({
+      task: {
+        ...this.state.task,
+        [event.target.name]: event.target.value,
+      },
+    });
+  };
+
+  handleChange = (dateNew) => {
+    this.setState({
+      date: dateNew,
+    });
+  };
 
   render() {
     return (
@@ -45,7 +87,7 @@ export default class Task extends Component {
           <Table borderless>
             <thead>
               <tr>
-                <th>Task Id</th>
+                <th>Done?</th>
                 <th>Date</th>
                 <th colSpan="2">Description</th>
                 <th>Options</th>
@@ -89,14 +131,18 @@ export default class Task extends Component {
           </Table>
         </Row>
 
-        <Modal show={this.state.show} onHide={this.handleCLose}>
+        <Modal show={this.state.showModal} onHide={this.handleCLose}>
           <Modal.Header closeButton>
             <Modal.Title>Add Task</Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <Row className="justify-content-center">
               <Col xs={10}>
-                <form id="form_add_task">
+                <form
+                  id="form_add_task"
+                  onSubmit={this.addTask}
+                  onInput={this.handleTask}
+                >
                   <div className="input-group mb-3">
                     <div className="input-group-append">
                       <span className="input-group-text">
@@ -109,7 +155,7 @@ export default class Task extends Component {
                       className="form-control input_user"
                       placeholder="Do excersice at mornings..."
                       required
-                    ></input>
+                    />
                   </div>
                   <div className="input-group mb-2">
                     <div className="input-group-append">
@@ -117,13 +163,13 @@ export default class Task extends Component {
                         <i className="fas fa-calendar-minus"></i>
                       </span>
                     </div>
-                    <input
-                      type="text"
-                      name="date"
-                      className="form-control input_pass"
-                      placeholder="30/07/2020"
-                      required
-                    ></input>
+                    <DatePicker
+                      selected={this.state.startDate}
+                      onChange={this.handleTask}
+                      className="form-control input_user"
+                      dateFormat="MM/dd/yyyy"
+                      placeholderText="01/08/2020"
+                    />
                   </div>
                   <div className="d-flex justify-content-center mt-3 login_container_task">
                     <button
