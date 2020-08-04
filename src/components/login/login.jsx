@@ -59,11 +59,28 @@ export default class Login extends Component {
       .then((result) => {
         console.log(result);
         document.getElementById("form_login").reset();
+
+        // switch (result.message) {
+        //   case "Email o contraseña incorrectas":
+        //     return this.toastSucces("Email or password is not correct");
+        //   case "Las credenciales son correctas":
+        //     return (
+        //       this.toastSuccess("Welcome back!!"),
+        //       this.props.loading(),
+        //       setTimeout(() => {
+        //         this.props.task();
+        //       }, 1000)
+        //     );
+        //   default:
+        //     return null;
+        // }
+
         if (result.message === "Email o contraseña incorrectas") {
           return this.toastSucces("Email or password is not correct");
         }
-        if (result.results === "Las credenciales son correctas") {
+        if (result.message === "Las credenciales son correctas") {
           this.toastSucces("Welcome back!!");
+          this.props.loading();
           setTimeout(() => {
             this.props.task();
           }, 1000);
@@ -129,12 +146,7 @@ export default class Login extends Component {
                   ></input>
                 </div>
                 <div className="d-flex justify-content-center mt-3 login_container">
-                  <button
-                    type="submit"
-                    name="button"
-                    className="btn login_btn"
-                    // onClick={temp ? this.props.task : console.log(temp)}
-                  >
+                  <button type="submit" name="button" className="btn login_btn">
                     Login
                   </button>
                 </div>

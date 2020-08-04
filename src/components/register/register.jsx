@@ -66,7 +66,7 @@ export default class Register extends Component {
               this.toastSuccess("This user has been successfully registered"),
               setTimeout(() => {
                 this.props.task();
-              }, 1000)
+              }, 1200)
             );
           default:
             return null;

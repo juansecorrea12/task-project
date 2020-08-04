@@ -13,7 +13,7 @@ export default class App extends Component {
       showView: "loading",
     };
 
-    const Methods = ["login", "register", "task"];
+    const Methods = ["login", "register", "task", "loading"];
     Methods.forEach((element) => {
       this[element] = this[element].bind(this);
     });
@@ -33,11 +33,20 @@ export default class App extends Component {
   task() {
     this.setState({ showView: "task" });
   }
+  loading() {
+    this.setState({ showView: "loading" });
+  }
 
   render() {
     switch (this.state.showView) {
       case "login":
-        return <Login register={this.register} task={this.task} />;
+        return (
+          <Login
+            register={this.register}
+            task={this.task}
+            loading={this.loading}
+          />
+        );
       case "register":
         return <Register login={this.login} task={this.task} />;
       case "task":
