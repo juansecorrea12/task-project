@@ -64,6 +64,9 @@ export default class Login extends Component {
         }
         if (result.results === "Las credenciales son correctas") {
           this.toastSucces("Welcome back!!");
+          setTimeout(() => {
+            this.props.task();
+          }, 1000);
         }
       })
       .catch((error) => {

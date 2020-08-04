@@ -62,8 +62,11 @@ export default class Register extends Component {
           case "El usuario ya está registrado en el sistema":
             return this.toastSuccess("This user already exists in database");
           case "El usuario ha sido registrado correctamente":
-            return this.toastSuccess(
-              "This user has been successfully registered"
+            return (
+              this.toastSuccess("This user has been successfully registered"),
+              setTimeout(() => {
+                this.props.task();
+              }, 1000)
             );
           default:
             return null;

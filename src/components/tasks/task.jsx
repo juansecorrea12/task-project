@@ -20,7 +20,6 @@ export default class Task extends Component {
         content: "",
         date: new Date(),
       },
-      startDate: new Date(),
       showModal: false,
     };
   }
@@ -70,7 +69,10 @@ export default class Task extends Component {
 
   handleChange = (dateNew) => {
     this.setState({
-      date: dateNew,
+      task: {
+        ...this.state.task,
+        date: dateNew,
+      },
     });
   };
 
@@ -102,26 +104,8 @@ export default class Task extends Component {
                     </InputGroup.Prepend>
                   </InputGroup>
                 </th>
-                <td>15/07/2020</td>
-                <td colSpan="2">Task number 1</td>
-                <td>
-                  <button className="btn btn-bg">Edit</button>
-                  <button className="btn btn-bg  mx-2">Delete</button>
-                </td>
-              </tr>
-              <tr>
-                <th scope="row">2</th>
-                <td>15/07/2020</td>
-                <td colSpan="2">Task number 2</td>
-                <td>
-                  <button className="btn btn-bg">Edit</button>
-                  <button className="btn btn-bg  mx-2">Delete</button>
-                </td>
-              </tr>
-              <tr>
-                <th scope="row">3</th>
-                <td>15/07/2020</td>
-                <td colSpan="2">Task number 3</td>
+                <td>{this.state.task.date}</td>
+                <td colSpan="2">{this.state.task.content}</td>
                 <td>
                   <button className="btn btn-bg">Edit</button>
                   <button className="btn btn-bg  mx-2">Delete</button>
@@ -138,11 +122,7 @@ export default class Task extends Component {
           <Modal.Body>
             <Row className="justify-content-center">
               <Col xs={10}>
-                <form
-                  id="form_add_task"
-                  onSubmit={this.addTask}
-                  onInput={this.handleTask}
-                >
+                <form id="form_add_task" onSubmit={this.addTask}>
                   <div className="input-group mb-3">
                     <div className="input-group-append">
                       <span className="input-group-text">
@@ -150,6 +130,7 @@ export default class Task extends Component {
                       </span>
                     </div>
                     <input
+                      onChange={this.handleTask}
                       type="text"
                       name="content"
                       className="form-control input_user"
@@ -164,8 +145,9 @@ export default class Task extends Component {
                       </span>
                     </div>
                     <DatePicker
-                      selected={this.state.startDate}
-                      onChange={this.handleTask}
+                      name="date"
+                      selected={this.state.task.date}
+                      onChange={this.handleChange}
                       className="form-control input_user"
                       dateFormat="MM/dd/yyyy"
                       placeholderText="01/08/2020"
