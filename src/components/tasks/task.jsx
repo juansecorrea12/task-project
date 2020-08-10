@@ -28,15 +28,29 @@ export default class Task extends Component {
       },
       taskEdit: {
         content: "",
-        date: new Date(),
+        date: "",
       },
       showModal: false,
       showModalEdit: false,
       tasks: [],
-      // nextPage: "",
-      // prevPage: "",
+      taskFilterName: "",
+      taskFilterDate: new Date(),
     };
   }
+
+  // Handle filtro por contenido y por fecha
+  handleFilterName = (event) => {
+    this.setState({
+      taskFilterName: event.target.value,
+    });
+  };
+
+  handleFilterDate = (dateNew) => {
+    this.setState({
+      ...this.state.taskFilterDate,
+      taskFilterDate: dateNew,
+    });
+  };
 
   handleShow = () => {
     this.setState({
@@ -128,12 +142,8 @@ export default class Task extends Component {
         return response.json();
       })
       .then((result) => {
-        const prev = result.prevPage;
-        const next = result.nextPage;
         this.setState({
           tasks: result.results,
-          prev,
-          next,
         });
         console.log(result);
       })
@@ -144,7 +154,10 @@ export default class Task extends Component {
 
   setTask = (task) => {
     this.setState({
-      taskEdit: task,
+      taskEdit: {
+        content: task.content,
+        date: task.date,
+      },
     });
     this.handleShowEdit();
   };
@@ -237,11 +250,23 @@ export default class Task extends Component {
             </div>
             <h2 className="title-head ml-2">Task List</h2>
           </div>
-          <FormControl
-            type="text"
-            placeholder="Search Task..."
-            className="mr-sm-2 search-bar"
-          />
+          <div className="d-flex justify-content-around align-items-center">
+            <FormControl
+              type="text"
+              placeholder="Search Task..."
+              className="mr-sm-2 search-bar"
+              onChange={this.handleFilterName}
+            />
+            <DatePicker
+              name="date"
+              selected={this.state.taskFilterDate}
+              onChange={this.handleFilterDate}
+              className="form-control input_user search-bar"
+              dateFormat="yyyy/MM/dd"
+              placeholderText="Date?"
+            />
+            {/* <Button className="btn btn-bg">Date?</Button> */}
+          </div>
           <div className="d-flex">
             <Button className="btn btn-bg" onClick={this.handleShow}>
               <i className="fas fa-plus"></i>
@@ -276,39 +301,48 @@ export default class Task extends Component {
               </tr>
             </thead>
             <tbody>
-              {this.state.tasks.map((taskNew, index) => {
-                return (
-                  <tr key={index} className="border-bottom">
-                    <th scope="row">
-                      <InputGroup className="mb-3">
-                        <InputGroup.Prepend>
-                          <InputGroup.Checkbox aria-label="Checkbox for following text input" />
-                        </InputGroup.Prepend>
-                      </InputGroup>
-                    </th>
-                    <td>{moment(taskNew.date).format("MMM Do YY")}</td>
-                    <td colSpan="2">{taskNew.content}</td>
-                    <td>
-                      <button
-                        className="btn btn-bg"
-                        onClick={() => {
-                          this.setTask(taskNew);
-                        }}
-                      >
-                        Edit
-                      </button>
-                      <button
-                        className="btn btn-bg  mx-2"
-                        onClick={() => {
-                          this.deleteTask(taskNew._id);
-                        }}
-                      >
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
+              {this.state.tasks
+                .filter((taskFilter) => {
+                  return taskFilter === ""
+                    ? true
+                    : taskFilter.content.includes(this.state.taskFilterName);
+                })
+                // .filter((taskFilter) => {
+                //   return taskFilter.date.includes(this.state.taskFilterDate);
+                // })
+                .map((taskNew, index) => {
+                  return (
+                    <tr key={index} className="border-bottom">
+                      <th scope="row">
+                        <InputGroup className="mb-3">
+                          <InputGroup.Prepend>
+                            <InputGroup.Checkbox aria-label="Checkbox for following text input" />
+                          </InputGroup.Prepend>
+                        </InputGroup>
+                      </th>
+                      <td>{moment(taskNew.date).format("MMM Do YY")}</td>
+                      <td colSpan="2">{taskNew.content}</td>
+                      <td>
+                        <button
+                          className="btn btn-bg"
+                          onClick={() => {
+                            this.setTask(taskNew);
+                          }}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          className="btn btn-bg  mx-2"
+                          onClick={() => {
+                            this.deleteTask(taskNew._id);
+                          }}
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
             </tbody>
           </Table>
         </Row>
@@ -429,7 +463,7 @@ export default class Task extends Component {
                       className="btn login_btn"
                       onClick={this.handleCLoseEdit}
                     >
-                      Add task
+                      Update task
                     </button>
                   </div>
                 </form>
