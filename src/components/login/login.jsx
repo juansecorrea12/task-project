@@ -57,7 +57,6 @@ export default class Login extends Component {
         return response.json();
       })
       .then((result) => {
-        console.log(result);
         document.getElementById("form_login").reset();
 
         // switch (result.message) {

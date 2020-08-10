@@ -3,6 +3,7 @@ import ".//task.component.css";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import moment from "moment";
+import LogoIcon from "../../logo.svg";
 import {
   Container,
   Row,
@@ -11,18 +12,29 @@ import {
   InputGroup,
   Modal,
   Col,
+  Dropdown,
+  ButtonGroup,
+  FormControl,
+  // Pagination,
 } from "react-bootstrap";
 
 export default class Task extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       task: {
         content: "",
         date: new Date(),
       },
+      taskEdit: {
+        content: "",
+        date: new Date(),
+      },
       showModal: false,
+      showModalEdit: false,
       tasks: [],
+      // nextPage: "",
+      // prevPage: "",
     };
   }
 
@@ -31,15 +43,58 @@ export default class Task extends Component {
       showModal: true,
     });
   };
+  handleShowEdit = () => {
+    this.setState({
+      showModalEdit: true,
+    });
+  };
   handleCLose = () => {
     this.setState({
       showModal: false,
+    });
+  };
+  handleCLoseEdit = () => {
+    this.setState({
+      showModalEdit: false,
     });
   };
 
   componentDidMount() {
     this.getTasks();
   }
+  // nextPage = () => {
+  //   fetch(this.nextPage)
+  //     .then((response) => {
+  //       return response.json();
+  //     })
+  //     .then((result) => {
+  //       console.log(result);
+  //       const prev = this.state.prevPage;
+  //       const next = result.nextPage;
+  //       this.setState({
+  //         tasks: result.results,
+  //         prev,
+  //         next,
+  //       });
+  //     });
+  // };
+
+  // prevPage = () => {
+  //   fetch(this.prevPage)
+  //     .then((response) => {
+  //       return response.json();
+  //     })
+  //     .then((result) => {
+  //       console.log(result);
+  //       const prev = result.prevPage;
+  //       const next = this.state.nextPage;
+  //       this.setState({
+  //         tasks: result.results,
+  //         prev,
+  //         next,
+  //       });
+  //     });
+  // };
 
   addTask = (event) => {
     event.preventDefault();
@@ -73,23 +128,35 @@ export default class Task extends Component {
         return response.json();
       })
       .then((result) => {
-        // console.log(result);
+        const prev = result.prevPage;
+        const next = result.nextPage;
         this.setState({
           tasks: result.results,
+          prev,
+          next,
         });
+        console.log(result);
       })
       .catch((error) => {
         console.log(error);
       });
   };
-  updateTask = (id) => {
+
+  setTask = (task) => {
+    this.setState({
+      taskEdit: task,
+    });
+    this.handleShowEdit();
+  };
+  updateTask = (id, event) => {
+    event.preventDefault();
     const url = "https://academlo-todolist.herokuapp.com/tasks" + id;
     const options = {
       method: "PUT",
       headers: {
         "Content-Type": "application/json; charset=UTF-8",
       },
-      body: JSON.stringify(this.state.task),
+      body: JSON.stringify(this.state.taskEdit),
     };
     fetch(url, options)
       .then((response) => {
@@ -97,6 +164,7 @@ export default class Task extends Component {
       })
       .then((result) => {
         console.log(result);
+        this.getTasks();
       })
       .catch((error) => {
         console.log(error);
@@ -126,6 +194,14 @@ export default class Task extends Component {
       },
     });
   };
+  handleTaskEdit = (event) => {
+    this.setState({
+      taskEdit: {
+        ...this.state.taskEdit,
+        [event.target.name]: event.target.value,
+      },
+    });
+  };
 
   handleChange = (dateNew) => {
     this.setState({
@@ -135,19 +211,58 @@ export default class Task extends Component {
       },
     });
   };
+  handleChangeEdit = (dateNew) => {
+    this.setState({
+      taskEdit: {
+        ...this.state.taskEdit,
+        date: dateNew,
+      },
+    });
+  };
+
+  logOut = () => {
+    this.props.loading();
+    setTimeout(() => {
+      this.props.login();
+    }, 1200);
+  };
 
   render() {
     return (
       <Container className="container-task border mt-5">
         <Row className="align-items-center justify-content-between p-2 border-bottom">
-          <h2>Task List</h2>
+          <div className="w-25 d-flex align-items-center">
+            <div className="container-logo-title">
+              <img src={LogoIcon} alt="Logo" className="brand-logo-title " />
+            </div>
+            <h2 className="title-head ml-2">Task List</h2>
+          </div>
+          <FormControl
+            type="text"
+            placeholder="Search Task..."
+            className="mr-sm-2 search-bar"
+          />
           <div className="d-flex">
             <Button className="btn btn-bg" onClick={this.handleShow}>
               <i className="fas fa-plus"></i>
             </Button>
-            <Button className="btn btn-bg ml-2">
-              <i className="fas fa-user"></i>
-            </Button>
+            <Dropdown as={ButtonGroup} className="btn btn-bg ml-2">
+              <Button className="btn btn-bg">
+                <i className="fas fa-user"></i>
+              </Button>
+
+              <Dropdown.Toggle
+                split
+                id="dropdown-split-basic"
+                className="btn btn-bg"
+              />
+
+              <Dropdown.Menu>
+                <Dropdown.Item href="#" onClick={this.logOut}>
+                  Cerrar Sesión
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
           </div>
         </Row>
         <Row className="p-2">
@@ -163,7 +278,7 @@ export default class Task extends Component {
             <tbody>
               {this.state.tasks.map((taskNew, index) => {
                 return (
-                  <tr key={index}>
+                  <tr key={index} className="border-bottom">
                     <th scope="row">
                       <InputGroup className="mb-3">
                         <InputGroup.Prepend>
@@ -177,7 +292,7 @@ export default class Task extends Component {
                       <button
                         className="btn btn-bg"
                         onClick={() => {
-                          this.updateTask(taskNew._id);
+                          this.setTask(taskNew);
                         }}
                       >
                         Edit
@@ -197,6 +312,13 @@ export default class Task extends Component {
             </tbody>
           </Table>
         </Row>
+        {/* <Row className="justify-content-center">
+          <Col xs={6}>
+            <Pagination>
+              <Pagination.Item>{13}</Pagination.Item>
+            </Pagination>
+          </Col>
+        </Row> */}
 
         <Modal show={this.state.showModal} onHide={this.handleCLose}>
           <Modal.Header closeButton>
@@ -242,6 +364,70 @@ export default class Task extends Component {
                       name="button"
                       className="btn login_btn"
                       onClick={this.handleCLose}
+                    >
+                      Add task
+                    </button>
+                  </div>
+                </form>
+              </Col>
+            </Row>
+          </Modal.Body>
+          <Modal.Footer>
+            <Row>
+              <Col>
+                <h6>
+                  All the task that you add, you can see them at task list
+                </h6>
+              </Col>
+            </Row>
+          </Modal.Footer>
+        </Modal>
+
+        {/* Otro modal para la edición */}
+        <Modal show={this.state.showModalEdit} onHide={this.handleCLoseEdit}>
+          <Modal.Header closeButton>
+            <Modal.Title>Add Task</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Row className="justify-content-center">
+              <Col xs={10}>
+                <form id="form_add_task" onSubmit={this.updateTask}>
+                  <div className="input-group mb-3">
+                    <div className="input-group-append">
+                      <span className="input-group-text">
+                        <i className="fas fa-tasks"></i>
+                      </span>
+                    </div>
+                    <input
+                      onChange={this.handleTaskEdit}
+                      type="text"
+                      name="content"
+                      value={this.state.taskEdit.content}
+                      className="form-control input_user"
+                      required
+                    />
+                  </div>
+                  <div className="input-group mb-2">
+                    <div className="input-group-append">
+                      <span className="input-group-text">
+                        <i className="fas fa-calendar-minus"></i>
+                      </span>
+                    </div>
+                    <DatePicker
+                      name="date"
+                      selected={this.state.taskEdit.date}
+                      onChange={this.handleChangeEdit}
+                      className="form-control input_user"
+                      dateFormat="yyyy/MM/dd"
+                      value={this.state.taskEdit.date}
+                    />
+                  </div>
+                  <div className="d-flex justify-content-center mt-3 login_container_task">
+                    <button
+                      type="submit"
+                      name="button"
+                      className="btn login_btn"
+                      onClick={this.handleCLoseEdit}
                     >
                       Add task
                     </button>

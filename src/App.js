@@ -20,7 +20,7 @@ export default class App extends Component {
   }
   componentDidMount() {
     setTimeout(() => {
-      this.setState({ showView: "login" });
+      this.setState({ showView: "task" });
     }, 3000);
   }
 
@@ -50,7 +50,7 @@ export default class App extends Component {
       case "register":
         return <Register login={this.login} task={this.task} />;
       case "task":
-        return <Task />;
+        return <Task login={this.login} loading={this.loading} />;
       default:
         return <Loading />;
     }

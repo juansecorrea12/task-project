@@ -12,7 +12,8 @@
   border-color: #8645ff;
   color: #fff;
 }
-.btn-bg:hover {
+.btn-bg:hover,
+.btn-bg:active {
   color: #fff;
   background-color: #562ea1;
 }
@@ -50,4 +51,24 @@
 .react-datepicker__year-text--in-selecting-range,
 .react-datepicker__year-text--in-range {
   background-color: #8645ff !important;
+}
+.search-bar {
+  border-color: #8645ff !important;
+  width: 40% !important;
+  color: #8645ff !important;
+}
+.title-head {
+  color: #8645ff !important;
+  background-color: transparent !important;
+}
+.container-logo-title {
+  width: 70px;
+  height: 70px;
+  display: flex;
+  justify-content: center;
+  background-color: #8645ff !important;
+  border-radius: 50%;
+}
+.container-logo-title img {
+  max-width: 100%;
 }
