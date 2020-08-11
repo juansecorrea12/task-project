@@ -15,9 +15,9 @@ import {
   Dropdown,
   ButtonGroup,
   FormControl,
-  // Pagination,
 } from "react-bootstrap";
 
+// let horas = [];
 export default class Task extends Component {
   constructor(props) {
     super(props);
@@ -34,7 +34,7 @@ export default class Task extends Component {
       showModalEdit: false,
       tasks: [],
       taskFilterName: "",
-      taskFilterDate: new Date(),
+      taskFilterDate: "",
     };
   }
 
@@ -76,40 +76,6 @@ export default class Task extends Component {
   componentDidMount() {
     this.getTasks();
   }
-  // nextPage = () => {
-  //   fetch(this.nextPage)
-  //     .then((response) => {
-  //       return response.json();
-  //     })
-  //     .then((result) => {
-  //       console.log(result);
-  //       const prev = this.state.prevPage;
-  //       const next = result.nextPage;
-  //       this.setState({
-  //         tasks: result.results,
-  //         prev,
-  //         next,
-  //       });
-  //     });
-  // };
-
-  // prevPage = () => {
-  //   fetch(this.prevPage)
-  //     .then((response) => {
-  //       return response.json();
-  //     })
-  //     .then((result) => {
-  //       console.log(result);
-  //       const prev = result.prevPage;
-  //       const next = this.state.nextPage;
-  //       this.setState({
-  //         tasks: result.results,
-  //         prev,
-  //         next,
-  //       });
-  //     });
-  // };
-
   addTask = (event) => {
     event.preventDefault();
     const url = "https://academlo-todolist.herokuapp.com/tasks";
@@ -145,16 +111,31 @@ export default class Task extends Component {
         this.setState({
           tasks: result.results,
         });
-        console.log(result);
+        // let tamano = result.results;
+        // tamano.map((dates) => {
+        //   return horas.push(dates.date);
+        // });
+        // console.log(horas);
       })
       .catch((error) => {
         console.log(error);
       });
   };
 
+  // Metodo para filtrar por fecha
+  // getTodayElements = (array) => {
+  //   let today = new Date();
+  //   return horas.filter((date) => {
+  //     if (moment(today).isSame(date, "day")) {
+  //       return date;
+  //     }
+  //   });
+  // };
+
   setTask = (task) => {
     this.setState({
       taskEdit: {
+        id: task._id,
         content: task.content,
         date: task.date,
       },
@@ -163,7 +144,7 @@ export default class Task extends Component {
   };
   updateTask = (id, event) => {
     event.preventDefault();
-    const url = "https://academlo-todolist.herokuapp.com/tasks" + id;
+    const url = "https://academlo-todolist.herokuapp.com/tasks/" + id;
     const options = {
       method: "PUT",
       headers: {
@@ -265,7 +246,6 @@ export default class Task extends Component {
               dateFormat="yyyy/MM/dd"
               placeholderText="Date?"
             />
-            {/* <Button className="btn btn-bg">Date?</Button> */}
           </div>
           <div className="d-flex">
             <Button className="btn btn-bg" onClick={this.handleShow}>
@@ -307,6 +287,9 @@ export default class Task extends Component {
                     ? true
                     : taskFilter.content.includes(this.state.taskFilterName);
                 })
+                // .filter((taskFilter) => {
+                //   return this.getTodayElements(taskFilter);
+                // })
                 // .filter((taskFilter) => {
                 //   return taskFilter.date.includes(this.state.taskFilterDate);
                 // })
@@ -425,7 +408,12 @@ export default class Task extends Component {
           <Modal.Body>
             <Row className="justify-content-center">
               <Col xs={10}>
-                <form id="form_add_task" onSubmit={this.updateTask}>
+                <form
+                  id="form_add_task"
+                  onSubmit={(event) =>
+                    this.updateTask(this.state.taskEdit.id, event)
+                  }
+                >
                   <div className="input-group mb-3">
                     <div className="input-group-append">
                       <span className="input-group-text">
@@ -449,7 +437,6 @@ export default class Task extends Component {
                     </div>
                     <DatePicker
                       name="date"
-                      selected={this.state.taskEdit.date}
                       onChange={this.handleChangeEdit}
                       className="form-control input_user"
                       dateFormat="yyyy/MM/dd"

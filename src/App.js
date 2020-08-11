@@ -20,7 +20,7 @@ export default class App extends Component {
   }
   componentDidMount() {
     setTimeout(() => {
-      this.setState({ showView: "task" });
+      this.setState({ showView: "login" });
     }, 3000);
   }
 
