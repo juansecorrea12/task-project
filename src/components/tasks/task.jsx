@@ -14,6 +14,7 @@ import {
   Col,
   Dropdown,
   ButtonGroup,
+  Form,
   FormControl,
 } from "react-bootstrap";
 
@@ -34,7 +35,9 @@ export default class Task extends Component {
       showModalEdit: false,
       tasks: [],
       taskFilterName: "",
-      taskFilterDate: "",
+      taskFilterDate: new Date(),
+      checkTask: false,
+      type: "",
     };
   }
 
@@ -45,11 +48,32 @@ export default class Task extends Component {
     });
   };
 
-  handleFilterDate = (dateNew) => {
-    this.setState({
-      ...this.state.taskFilterDate,
-      taskFilterDate: dateNew,
-    });
+  handleFilterDate = (task) => {
+    let today = moment();
+    let startWeek = moment().startOf("week");
+    let endWeek = moment().endOf("week");
+    let startNextWeek = moment(endWeek).add(1, "seconds");
+    let endNextWeek = moment(endWeek).add(7, "days");
+
+    switch (this.state.type) {
+      case "today":
+        if (moment(task.date).isSame(today, "day")) {
+          return true;
+        }
+        return false;
+      case "week":
+        if (moment(task.date).isBetween(startWeek, endWeek)) {
+          return true;
+        }
+        return false;
+      case "nextWeek":
+        if (moment(task.date).isBetween(startNextWeek, endNextWeek)) {
+          return true;
+        }
+        return false;
+      default:
+        return true;
+    }
   };
 
   handleShow = () => {
@@ -221,6 +245,30 @@ export default class Task extends Component {
     }, 1200);
   };
 
+  // Metodo para conocer si se ha chuleado o no
+
+  handleChangeCheck = () => {
+    if (this.state.checkTask) {
+      this.setState({
+        checkTask: false,
+      });
+    } else {
+      this.setState({
+        checkTask: true,
+      });
+    }
+  };
+  // getTaskDone = () => {
+  //   let checkTasks = document.getElementsByClassName("done-task");
+  //   let temp = 0;
+  //   for (let index = 0; index <= checkTasks.length; index++) {
+  //     if (checkTasks[index].checked) {
+  //       temp++;
+  //     }
+  //   }
+  //   console.log(temp);
+  // };
+
   render() {
     return (
       <Container className="container-task border mt-5">
@@ -238,14 +286,17 @@ export default class Task extends Component {
               className="mr-sm-2 search-bar"
               onChange={this.handleFilterName}
             />
-            <DatePicker
-              name="date"
-              selected={this.state.taskFilterDate}
-              onChange={this.handleFilterDate}
+            <Form.Control
+              as="select"
+              custom
               className="form-control input_user search-bar"
-              dateFormat="yyyy/MM/dd"
-              placeholderText="Date?"
-            />
+              onChange={(event) => this.setState({ type: event.target.value })}
+            >
+              <option value="all">All tasks</option>
+              <option value="today">Today</option>
+              <option value="week">Task on Week</option>
+              <option value="nextWeek">Task on next week</option>
+            </Form.Control>
           </div>
           <div className="d-flex">
             <Button className="btn btn-bg" onClick={this.handleShow}>
@@ -287,20 +338,19 @@ export default class Task extends Component {
                     ? true
                     : taskFilter.content.includes(this.state.taskFilterName);
                 })
-                // .filter((taskFilter) => {
-                //   return this.getTodayElements(taskFilter);
-                // })
-                // .filter((taskFilter) => {
-                //   return taskFilter.date.includes(this.state.taskFilterDate);
-                // })
+                .filter((taskFilter) => this.handleFilterDate(taskFilter))
                 .map((taskNew, index) => {
                   return (
                     <tr key={index} className="border-bottom">
                       <th scope="row">
                         <InputGroup className="mb-3">
-                          <InputGroup.Prepend>
-                            <InputGroup.Checkbox aria-label="Checkbox for following text input" />
-                          </InputGroup.Prepend>
+                          <InputGroup.Checkbox
+                            className="done-task"
+                            aria-label="Checkbox for following text input"
+                            name="checked"
+                            defaultChecked={this.state.checkTask}
+                            onChange={this.handleChangeCheck}
+                          />
                         </InputGroup>
                       </th>
                       <td>{moment(taskNew.date).format("MMM Do YY")}</td>
@@ -329,13 +379,6 @@ export default class Task extends Component {
             </tbody>
           </Table>
         </Row>
-        {/* <Row className="justify-content-center">
-          <Col xs={6}>
-            <Pagination>
-              <Pagination.Item>{13}</Pagination.Item>
-            </Pagination>
-          </Col>
-        </Row> */}
 
         <Modal show={this.state.showModal} onHide={this.handleCLose}>
           <Modal.Header closeButton>

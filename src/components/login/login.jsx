@@ -58,22 +58,6 @@ export default class Login extends Component {
       })
       .then((result) => {
         document.getElementById("form_login").reset();
-
-        // switch (result.message) {
-        //   case "Email o contraseña incorrectas":
-        //     return this.toastSucces("Email or password is not correct");
-        //   case "Las credenciales son correctas":
-        //     return (
-        //       this.toastSuccess("Welcome back!!"),
-        //       this.props.loading(),
-        //       setTimeout(() => {
-        //         this.props.task();
-        //       }, 1000)
-        //     );
-        //   default:
-        //     return null;
-        // }
-
         if (result.message === "Email o contraseña incorrectas") {
           return this.toastSucces("Email or password is not correct");
         }
@@ -99,7 +83,6 @@ export default class Login extends Component {
       },
     });
   };
-
   render() {
     return (
       <div className="container h-100 mt-5 p-relative">
